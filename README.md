@@ -9,7 +9,7 @@ User Data Ingestion – Processing file in a branched workflow
 5.	If the upload is successful we’ll run Lambda 3A and notify admin user that the file is uploaded to DynamoDB table successfully.
 6.	However, if there is an error in uploading file to DynamoDB, we’ll execute Lambda 3B to notify user of failed event via SNS topic.
 
-![image](https://github.com/pranshu469/aws-s3-eventNotification/assets/22789861/a9bfb14d-3f8b-4d63-940c-4160faa7d872)
+Architecture Diagram : https://github.com/pranshu469/aws-s3-eventNotification/blob/main/S3-uploader.png
 
 
  
