@@ -9,7 +9,7 @@ User Data Ingestion – Processing file in a branched workflow
 5.	If the upload is successful we’ll notify admin user that the file is uploaded to DynamoDB table successfully.
 6.	However, if there is an error in uploading file to DynamoDB, we’ll notify user of failed event via SNS topic.
 
-Architecture Diagram : https://github.com/pranshu469/aws-s3-eventNotification/blob/main/S3-uploader.png
+Architecture Diagram : https://github.com/pranshu469/aws-s3-eventNotification/blob/main/architecture.png
 
 
  
