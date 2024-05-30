@@ -17,9 +17,8 @@ def lambda_handler(event, context):
     
     json_data = []
 
-    for record in event['Records']:
-        bucket_name = record['s3']['bucket']['name']
-        key_name = record['s3']['object']['key']
+    bucket_name = event['s3']['bucket']['name']
+    key_name = event['s3']['object']['key']
         
     s3_object = s3.get_object(Bucket=bucket_name, Key=key_name)
     data = s3_object['Body'].read()
