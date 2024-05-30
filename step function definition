@@ -1,0 +1,88 @@
+{
+  "Comment": "A description of my state machine",
+  "StartAt": "Lambda CSV to JSON",
+  "States": {
+    "Lambda CSV to JSON": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "OutputPath": "$.Payload",
+      "Parameters": {
+        "Payload.$": "$",
+        "FunctionName": "arn:aws:lambda:us-east-1:<ACCOUNT_ID>:function:s3-eventnotification-project-csv-to-json:$LATEST"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ],
+      "Next": "Lambda DDB metadata"
+    },
+    "Lambda DDB metadata": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "OutputPath": "$.Payload",
+      "Parameters": {
+        "Payload.$": "$",
+        "FunctionName": "arn:aws:lambda:us-east-1:<ACCOUNT_ID>:function:s3-eventnotification-project-dynamodb-metadata:$LATEST"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ],
+      "Next": "SNS Success Message",
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "Lambda.ClientExecutionTimeoutException",
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.Unknown"
+          ],
+          "Next": "SNS Fail Message"
+        },
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "SNS Fail Message"
+        }
+      ]
+    },
+    "SNS Success Message": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "Message.$": "$",
+        "TopicArn": "arn:aws:sns:us-east-1:<ACCOUNT_ID>:s3-eventnotification-project"
+      },
+      "End": true
+    },
+    "SNS Fail Message": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "Message.$": "$",
+        "TopicArn": "arn:aws:sns:us-east-1:<ACCOUNT_ID>:s3-eventnotification-project"
+      },
+      "End": true
+    }
+  }
+}
